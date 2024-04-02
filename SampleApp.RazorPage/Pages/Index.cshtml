@@ -1,0 +1,82 @@
+﻿@page "/"
+@model IndexModel
+@using SampleApp.Domen.Application
+@using SampleApp.Domen.Models
+@using SampleApp.Pages
+@{
+    ViewData["Title"] = "Home page";
+    var sessionId = HttpContext.Session.GetString("SampleSession");
+    SampleAppContext _db = new SampleAppContext();
+    User current_user = _db.Users.Where(u => u.Id == Convert.ToInt32(sessionId)).FirstOrDefault();
+}
+
+
+<div class="text-center">
+    
+@{
+        
+    if(sessionId == null)
+    {
+        <h1 class="display-4">Добро пожаловать, анон!</h1>
+        <p></p>
+        <div class="col-md-15">
+            <h3>
+                Cообщения: @_db.Microposts.Count()
+            </h3>
+            <ul class="microposts">
+                    @foreach (var post in Model.Messages.OrderByDescending(p => p.CreatedAt))
+                {
+                    <li role="separator" class="divider"></li>
+                        <b><a asp-page="/Profile" asp-route-id="@post.UserId">@post.User.Name</a>: </b>
+                    <p>
+                        <b>Date: </b> @post.CreatedAt
+                    </p>
+                    <b>Message: </b> @post.Content
+                    <li role="separator" class="divider"></li>
+
+                }
+            </ul>
+        </div>
+    }
+    else
+    {
+        <h1 class="display-3">Добро пожаловать, @current_user.Name!</h1>
+        if (Model.CurrentUser.Id == current_user.Id)
+        {   
+            <aside>
+                <section class="micropost_form">
+                    <form action="" method="POST" class="form-signin" role="form">
+                        <textarea rows="4" cols="10" type="text" name="message" required autofocus></textarea>
+                        <button class="btn btn-lg btn-primary btn-block" type="submit" name="submit" >Отправить</button>
+                    </form>
+                </section>
+            </aside>
+                
+                <div class="col-md-15">
+                    <h3 class="display-5">
+                        Cообщений: @_db.Microposts.Count()
+                    </h3>
+                    <ul class="microposts">
+                        @foreach (var post in Model.Messages.OrderByDescending(p => p.CreatedAt))
+                        {
+                            <li role="separator" class="divider"></li>
+                            <b><a asp-page="/Profile" asp-route-id="@post.UserId">@post.User.Name</a>: </b>
+                            <p>
+                                <b>Date: </b> @post.CreatedAt
+                            </p>
+                            <b>Message: </b> @post.Content
+                            if(current_user.Id == post.UserId || current_user.IsAdmin == true)
+                            {
+                            <a asp-page="Index" asp-page-handler="Delete" asp-route-id="@post.UserId" asp-route-messageid="@post.Id" class="btn btn-info">Удалить</a>
+                            }
+                            <p></p>
+                            <li role="separator" class="divider"></li>
+                        }
+                    </ul>
+                </div>
+        }
+         
+    }
+}      
+
+</div>

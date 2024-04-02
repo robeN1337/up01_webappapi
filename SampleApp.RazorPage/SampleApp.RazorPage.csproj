@@ -1,0 +1,36 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Content Remove="wwwroot\scss\custom.scss" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="wwwroot\scss\custom.scss" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Services\" />
+    <Folder Include="wwwroot\js\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="wwwroot\scss\custom.scss" />
+  </ItemGroup>
+
+
+<ItemGroup>
+	<PackageReference Include="AspNetCore.SassCompiler" Version="1.72.0" />
+	<PackageReference Include="Core.Flash" Version="2.1.1" />
+</ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\SampleApp.API\SampleApp.API.csproj" />
+  </ItemGroup>
+
+</Project>

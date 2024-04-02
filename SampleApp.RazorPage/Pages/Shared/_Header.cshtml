@@ -1,0 +1,51 @@
+﻿@using SampleApp.Domen.Models;
+@{
+    var sessionId = Context.Session.GetString("SampleSession");
+    SampleAppContext _db = new SampleAppContext();
+}
+
+<header class="navbar navbar-fixed-top navbar-inverse">
+    <div class="container">
+        <a href="/" id="logo"><img src="~/logolol.jpg" width=5%> F </a>
+
+        <nav>
+            <ul class="nav navbar-nav navbar-right"> 
+                @{
+
+                    if (sessionId != null)
+                    {
+                        User current_user = _db.Users.Where(u => u.Id == Convert.ToInt32(sessionId)).FirstOrDefault();
+                            <li><a href="/Users">Пользователи</a></li>
+
+                        <li class="dropdown">
+                            <a href="Profile" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+
+                            @if(current_user.IsAdmin == true)
+                            {<span> (ADMIN) @current_user.Name </span>} 
+                            else { @current_user.Name }
+                            
+                            <span class="caret"></span> 
+                            
+                            </a>
+
+                            <ul class="dropdown-menu">
+
+                                <li><a asp-page="/Profile" asp-route-id=@current_user.Id>Профиль</a></li>
+                                <li><a asp-page="/Edit" asp-route-id="@current_user.Id">Обновление</a></li>
+                                <li role="separator" class="divider"></li>
+                                <li><a asp-page="/Auth" asp-page-handler="Logout">Выход</a></li>
+
+                            </ul>
+                        </li>
+                    }
+                    else
+                    {
+                        <li><a href="/Sign">Регистрация</a></li>
+                        <li><a href="/Auth">Войти</a></li>
+                    }
+
+                }
+            </ul>
+        </nav>
+    </div>
+</header>

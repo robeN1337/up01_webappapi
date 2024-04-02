@@ -1,0 +1,111 @@
+﻿@page "{id}"
+@model SampleApp.Pages.ProfileModel
+@{
+    @using SampleApp.Domen.Models
+    ViewData["Title"] = "UserProfile";
+    var sessionId = HttpContext.Session.GetString("SampleSession");
+    SampleAppContext _db = new SampleAppContext();
+    User current_user = _db.Users.Where(u => u.Id == Convert.ToInt32(sessionId)).FirstOrDefault();
+    //int profile_userId = Model.ProfileUser.Id;
+}
+
+
+
+
+<div>
+    <h1 align ="center">
+        @Model.ProfileUser.Name
+    </h1>
+    <a class="btn btn-primary" asp-page="Followers" asp-route-id=@Model.ProfileUser.Id>Подписчики</a>
+    <a class="btn btn-primary" asp-page="Followeds" asp-route-id=@Model.ProfileUser.Id>Подписки</a>
+    
+    @{
+        if(sessionId != null)
+        {
+            if (Model.ProfileUser.Id == current_user.Id)
+            {
+             //       <p>тута свои сообщения,подписки и подписчики,кнопка подписаться(если на своём профиле - то без кнопки подписаться)</p>
+                <div>
+                    <h3>
+                        Cообщения: @Model.ProfileUser.Microposts.Count()
+                    </h3>
+                    <ol class="microposts" align="center">
+                        @foreach (var post in Model.ProfileUser.Microposts)
+                        {
+                            <li role="separator" class="divider"></li>
+                            <p>
+                                <b>@post.CreatedAt </b>
+                            </p>
+                            <p>
+                                <b>@post.User.Name: </b> @post.Content
+                            </p>
+                            <li role="separator" class="divider"></li>
+                        }
+                    </ol>
+                </div>
+            }
+            else
+            {
+                <form method="post">
+
+                    @{
+                        if (Model.CurrentUser != Model.ProfileUser)
+                        {
+                            if (!Model.IsFollow)
+                            {
+                                <button class="btn btn-success" type="submit">Подписаться</button>
+                            }
+                            else
+                            {
+                                <button class="btn btn-danger" type="submit">Отписаться</button>
+                            }
+                        }
+
+                    }
+
+                </form>
+                <div>
+
+                    <h3>
+                        Cообщения: @Model.ProfileUser.Microposts.Count()
+                    </h3>
+                    <ol class="microposts" align="center">
+                        @foreach (var post in Model.ProfileUser.Microposts)
+                        {
+                            <li role="separator" class="divider"></li>
+                            <p>
+                                <b>@post.CreatedAt </b>
+                            </p>
+                            <p>
+                                <b>@post.User.Name: </b> @post.Content
+                            </p>
+                            <li role="separator" class="divider"></li>
+                        }
+                    </ol>
+                </div>
+            }
+        }
+        else
+        {
+                <div>
+                    <h3>
+                        Cообщения: @Model.ProfileUser.Microposts.Count()
+                    </h3>
+                    <ol class="microposts" align="center">
+                        @foreach (var post in Model.ProfileUser.Microposts)
+                    {
+                        <li role="separator" class="divider"></li>
+                        <p>
+                            <b>@post.CreatedAt </b>
+                        </p>
+                        <p>
+                            <b>@post.User.Name: </b> @post.Content
+                        </p>
+                        <li role="separator" class="divider"></li>
+                    }
+                    </ol>
+                </div>
+        }
+    } 
+    
+</div>

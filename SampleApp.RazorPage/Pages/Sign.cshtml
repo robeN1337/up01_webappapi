@@ -1,0 +1,23 @@
+﻿@page
+@model SampleApp.Pages.SignModel
+@{
+    ViewData["Title"] = "Регистрация";
+}
+
+<h1>Регистрация</h1>
+<div class="row">
+    <div class="col-md-6 col-md-offset-3">
+        <form action="" method="POST" class="form-signin" role="form">
+            <input type="text" id = "user-name" name="Name" class="form-control" placeholder="Name" required autofocus>
+            <input type="email" id = "email" name="Email" class="form-control" placeholder="Email" required autofocus>
+            <input type="password" id="password" name="Password" class="form-control" placeholder="Password" required autofocus>
+            <input type="password" id="password-confirmation" name="PasswordConfirmation" class="form-control" placeholder="Confirmation" required>
+            <button class="btn btn-lg btn-primary btn-block" type="submit" id ="submit-btn" name="submit">
+                Создать пользователя
+            </button>
+        </form>
+        <p></p>
+    </div>
+</div>
+
+
