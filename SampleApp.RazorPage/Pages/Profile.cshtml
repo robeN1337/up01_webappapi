@@ -14,7 +14,16 @@
 
 <div>
     <h1 align ="center">
-        @Model.ProfileUser.Name
+        @{
+            if (Model.ProfileUser.IsAdmin == true)
+            {
+                <span><font color=#FF0000>@Model.ProfileUser.Name</font></span>
+            }
+            else
+            {
+                <span>@Model.ProfileUser.Name</span>
+            }
+        }
     </h1>
     <a class="btn btn-primary" asp-page="Followers" asp-route-id=@Model.ProfileUser.Id>Подписчики</a>
     <a class="btn btn-primary" asp-page="Followeds" asp-route-id=@Model.ProfileUser.Id>Подписки</a>
@@ -65,7 +74,7 @@
 
                 </form>
                 <div>
-
+                  
                     <h3>
                         Cообщения: @Model.ProfileUser.Microposts.Count()
                     </h3>

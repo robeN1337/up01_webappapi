@@ -21,7 +21,7 @@
         <p></p>
         <div class="col-md-15">
             <h3>
-                Cообщения: @_db.Microposts.Count()
+                Постики: @_db.Microposts.Count()
             </h3>
             <ul class="microposts">
                     @foreach (var post in Model.Messages.OrderByDescending(p => p.CreatedAt))
@@ -36,11 +36,15 @@
 
                 }
             </ul>
-        </div>
-    }
-    else
-    {
-        <h1 class="display-3">Добро пожаловать, @current_user.Name!</h1>
+            </div>
+        }
+        else
+        {
+            if (current_user.IsAdmin == true)
+            {
+                <h1 class="display-3">Добро пожаловать, <font color="#FF0000">@current_user.Name</font>!</h1>
+            }
+            
         if (Model.CurrentUser.Id == current_user.Id)
         {   
             <aside>
@@ -54,7 +58,7 @@
                 
                 <div class="col-md-15">
                     <h3 class="display-5">
-                        Cообщений: @_db.Microposts.Count()
+                        Постики: @_db.Microposts.Count()
                     </h3>
                     <ul class="microposts">
                         @foreach (var post in Model.Messages.OrderByDescending(p => p.CreatedAt))
