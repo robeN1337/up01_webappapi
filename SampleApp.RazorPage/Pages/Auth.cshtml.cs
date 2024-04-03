@@ -3,53 +3,52 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using SampleApp.Domen.Models;
 
-namespace SampleApp.Pages
+namespace SampleApp.RazorPage.Pages;
+
+public class AuthModel : PageModel
 {
-    public class AuthModel : PageModel
+
+    public User User { get; set; }
+
+    private readonly HttpClient _http;
+    private readonly ILogger<AuthModel> _log;
+    private readonly IFlasher _f;
+    public AuthModel(IHttpClientFactory factory, ILogger<AuthModel> log, IFlasher f)
     {
-        private readonly SampleAppContext _db;
-        private readonly ILogger<SampleAppContext> _logger;
-        private readonly IFlasher _f;
+        _http = factory.CreateClient("API");
+        _log = log;
+        _f = f;
+    }
 
-        public AuthModel(SampleAppContext db, ILogger<SampleAppContext> logger, IFlasher f)
-        {
-            _db = db;
-            _logger = logger;
-            _f = f;
-        }
+    public void OnGet()
+    {
+    }
 
-        public void OnGet()
-        {
-        }
+    public async Task<IActionResult> OnPostAsync(User user)
+    {
 
-        [BindProperty]
-        public User Input { get; set; }
+        var response = await _http.GetAsync($"{_http.BaseAddress}/users/auth?email={user.Email}&password={user.Password}");
 
-        public IActionResult OnPost()
+        var current_user = await response.Content.ReadFromJsonAsync<User>();
+
+        if (response.IsSuccessStatusCode)
         {
-            User current_user = _db.Users.Where(u => u.Email == Input.Email && u.Password == Input.Password).FirstOrDefault();
-            if (current_user != null)
-            {
-                HttpContext.Session.SetString("SampleSession", $"{current_user.Id}");
-                _f.Flash(Types.Success, $"Добро пожаловать, {current_user.Name}!", dismissable: true);
-                return RedirectToPage("Index");
-            }
-            else
-            {
-                _f.Flash(Types.Danger, $"Неверный логин или пароль!", dismissable: true);
-                return Page();
-            }
-        }
-        
-        public IActionResult OnGetLogout()
-        {
-            // сброс сессии
-            
-            HttpContext.Session.Clear();
-            HttpContext.Session.Remove("SampleSession");
-            Response.Cookies.Delete("SampleSession");
-            _f.Flash(Types.Success, $"Данные очищены!", dismissable: true);
+            HttpContext.Session.SetString("SampleSession", $"{current_user.Id}");
+            _f.Flash(Types.Primary, $"Добро пожаловать, {current_user.Name}!");
             return RedirectToPage("Index");
         }
+        else
+        {
+            _f.Flash(Types.Danger, $"Неверный логин или пароль!");
+            return Page();
+        }
     }
+
+    public IActionResult OnGetLogout()
+    {
+        // сброс сессии
+        HttpContext.Session.Clear();
+        return RedirectToPage("Auth");
+    }
+
 }

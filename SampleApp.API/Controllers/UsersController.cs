@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SampleApp.Domen.Models;
+using System;
 
 namespace SampleApp.API.Controllers;
 
@@ -10,8 +11,8 @@ public class UsersController : ControllerBase
 {
     private readonly SampleAppContext _context;
     private readonly ILogger<UsersController> _log;
-
-    public UsersController(SampleAppContext context, ILogger<RegistrationController> log)
+        
+    public UsersController(SampleAppContext context, ILogger<UsersController> log)
     {
         _context = context;
         _log = log;
@@ -48,10 +49,6 @@ public class UsersController : ControllerBase
 
 
 
-
-
-
-
     // PUT: api/Users/5
     // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
     [HttpPut("{id}")]
@@ -83,8 +80,8 @@ public class UsersController : ControllerBase
         return NoContent();
     }
 
-    // POST: api/Users
-    [HttpPost]
+    // POST: api/Users // Регистрация пользователя
+    [HttpPost("reg")]
     public async Task<ActionResult<User>> RegisterUser(User user)
     {
         _context.Users.Add(user);
@@ -101,20 +98,30 @@ public class UsersController : ControllerBase
     }
 
 
-    // GET: api/Users/auth?email=a&password=b
+    // GET: api/Users/auth?email=a&password=b  // Авторизация по email и password
     [HttpGet("auth")]
     public async Task<ActionResult<User>> GetByEmailAndPassword(string email, string password)
     {
 
-        var current_user = _context.Users.Where(u => u.Email == email && u.Password == password).FirstOrDefault();
-        if (current_user != null)
+        User current_user = _context.Users.Where(u => u.Email == email && u.Password == password).FirstOrDefault();
+        try
         {
-           return Ok(current_user);
+            if (current_user != null)
+            {
+                HttpContext.Session.SetString("SampleSession", $"{current_user.Id}");
+                return Ok();
+            }
+            else
+            {
+                return NotFound();
+            }
         }
-        else
+        catch (Exception ex)
         {
-            return Problem("Не удается найти пользователя!");
+            _log.LogError($"Ошибка авторизации: {ex.Message}");
+            return BadRequest(ex.Message);
         }
+        
     }
 
 

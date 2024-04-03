@@ -1,5 +1,6 @@
-﻿@page "/Auth"
-@model SampleApp.Pages.AuthModel
+﻿
+@page "/Auth"
+@model SampleApp.RazorPage.Pages.AuthModel
 @{
     ViewData["Title"] = "Авторизация";
 }
@@ -8,10 +9,10 @@
 <div class="row">
     <div class="col-md-6 col-md-offset-3">
         <form method="post" class="form-signin" role="form">
-            <span asp-validation-for="Input.Email"></span>
-            <input type="email" asp-for="Input.Email" class="form-control" placeholder="Email" required autofocus>
-            <span asp-validation-for="Input.Password"></span>
-            <input type="password" asp-for="Input.Password" class="form-control" placeholder="Password" required autofocus>
+            <span asp-validation-for="User.Email"></span>
+            <input type="email" asp-for="User.Email" class="form-control" placeholder="Email" required autofocus>
+            <span asp-validation-for="User.Password"></span>
+            <input type="password" asp-for="User.Password" class="form-control" placeholder="Password" required autofocus>
             <button class="btn btn-lg btn-primary btn-block" type="submit">
                 Вход
             </button>
