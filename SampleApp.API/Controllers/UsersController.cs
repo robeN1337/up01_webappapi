@@ -124,8 +124,8 @@ public class UsersController : ControllerBase
     }
 
 
-    // DELETE: api/Users/5
-    [HttpDelete("{id}")]
+    // DELETE: api/Users/5 // Удаление пользователя через вкладку "Users"
+    [HttpDelete("{id}")] 
     public async Task<IActionResult> DeleteUser(int id)
     {
         if (_context.Users == null)
@@ -139,11 +139,28 @@ public class UsersController : ControllerBase
         }
 
         _context.Users.Remove(user);
-        await _context.SaveChangesAsync();
-
-        return NoContent();
+        try
+        {
+            await _context.SaveChangesAsync();
+            return Ok(user);
+        }
+        catch (Exception ex)
+        {
+            _log.LogError($"Ошибка удаления пользователя: {ex.Message}");
+            return BadRequest(ex.Message);
+        }
+        
+        
     }
 
+    
+    
+    
+    
+    
+    
+    
+    
     private bool UserExists(int id)
     {
         return (_context.Users?.Any(e => e.Id == id)).GetValueOrDefault();

@@ -5,8 +5,8 @@
     @using SampleApp.Domen.Models;
     ViewData["Title"] = "Users";
     var sessionId = HttpContext.Session.GetString("SampleSession");
-    SampleAppContext _db = new SampleAppContext();
-    User current_user = _db.Users.Where(u => u.Id == Convert.ToInt32(sessionId)).FirstOrDefault();
+   // SampleAppContext _db = new SampleAppContext();
+   // User current_user = _db.Users.Where(u => u.Id == Convert.ToInt32(sessionId)).FirstOrDefault();
 }
 
 <h1>Пользователи</h1>
@@ -29,11 +29,11 @@
                 </td>
                 <td>
                     
-                @if(sessionId != null && current_user.IsAdmin)
+                @if(sessionId != null && Model.current_user.IsAdmin == true)
                         
                 {
       
-                    @if (user.Id != current_user.Id)
+                    @if (user.Id != Model.current_user.Id)
                     {
                         <a class="btn btn-danger" asp-page="Users" asp-page-handler="Remove" asp-route-id="@user.Id">Удалить</a>
                     }
@@ -43,8 +43,8 @@
                     }
 
                 }
-                
-                else if(current_user.IsAdmin == false && user.Id == current_user.Id)
+
+                    else if (Model.current_user.IsAdmin == false && user.Id == Model.current_user.Id)
                 {
                     
                     <p>Это вы!</p>
