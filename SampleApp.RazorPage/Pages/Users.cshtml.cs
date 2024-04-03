@@ -68,21 +68,21 @@ namespace SampleApp.Pages
         }
         public async Task<IActionResult> OnGetRemoveAsync([FromQuery] int id)
         {
+            var delete_resp = await _http.DeleteAsync($"{_http.BaseAddress}/users/{id}");
+            var deleted_user = await delete_resp.Content.ReadFromJsonAsync<User>();
             
-                var delete_resp = await _http.DeleteAsync($"{_http.BaseAddress}/users/{id}");
+            if (!delete_resp.IsSuccessStatusCode)
+            {
+                _log.LogError($"Ошибка удаления: {delete_resp.Content.ToString()}");
+                _f.Flash(Types.Danger, $"Ошибка удаления пользователя : {delete_resp.Content.ToString()}");
 
-                if (!delete_resp.IsSuccessStatusCode)
-                {
-                    _log.LogError($"Ошибка удаления: {delete_resp.Content.ToString()}");
-                    //_f.Flash(Types.Danger, $"Ошибка удаления пользователя : {delete_resp.Content.ToString()}");
-
-                }
-                else
-                {
-                    //_log.LogInformation($"Пользователь {deleted_user.Name} удалён!");
-                    //_f.Flash(Types.Success, $"Пользователь {deleted_user.Name} удалён!");
-                }
-                return RedirectToPage();
+            }
+            else
+            {
+                _log.LogInformation($"Пользователь {deleted_user.Name} удалён!");
+                _f.Flash(Types.Success, $"Пользователь {deleted_user.Name} удалён!");
+            }
+            return RedirectToPage();
             
         }
 
