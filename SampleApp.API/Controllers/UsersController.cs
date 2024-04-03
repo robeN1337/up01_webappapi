@@ -124,7 +124,8 @@ public class UsersController : ControllerBase
     }
 
 
-    // DELETE: api/Users/5 // Удаление пользователя через вкладку "Users"
+
+    // DELETE: api/Users/5 // Удаление пользователя админами через вкладку "Users"
     [HttpDelete("{id}")] 
     public async Task<IActionResult> DeleteUser(int id)
     {

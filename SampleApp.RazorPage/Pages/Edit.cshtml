@@ -1,11 +1,11 @@
 ﻿@page "{id}"
-@model SampleApp.Pages.EditModel
+@model SampleApp.RazorPage.Pages.EditModel
 @{
     @using SampleApp.Domen.Models;
     ViewData["Title"] = "UserProfileEdit";
     var sessionId = HttpContext.Session.GetString("SampleSession");
-    SampleAppContext _db = new SampleAppContext();
-    User current_user = _db.Users.Where(u => u.Id == Convert.ToInt32(sessionId)).FirstOrDefault();
+    // SampleAppContext _db = new SampleAppContext();
+    // User current_user = _db.Users.Where(u => u.Id == Convert.ToInt32(sessionId)).FirstOrDefault();
 }
 
 @{
@@ -30,9 +30,9 @@
             </div>
         </div>
         
-        if (current_user.IsAdmin == true)
+        if (Model.current_user.IsAdmin == true)
         {          
-            current_user.IsAdmin = true;
+            Model.current_user.IsAdmin = true;
         }
     }
 

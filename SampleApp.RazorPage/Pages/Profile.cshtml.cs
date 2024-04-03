@@ -11,13 +11,13 @@ namespace SampleApp.Pages
 
         private readonly SampleAppContext _context;
         private readonly IFlasher _f;
-        private readonly ILogger<EditModel> _log;
+        private readonly ILogger<ProfileModel> _log;
 
         public User CurrentUser { get; set; }
         public User ProfileUser { get; set; }
         public bool IsFollow { get; set; }
 
-        public ProfileModel(SampleAppContext context, IFlasher f, ILogger<EditModel> log)
+        public ProfileModel(SampleAppContext context, IFlasher f, ILogger<ProfileModel> log)
         {
             _context = context;
             _f = f;

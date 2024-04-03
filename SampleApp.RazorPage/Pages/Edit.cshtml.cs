@@ -2,84 +2,57 @@ using Core.Flash;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
-using SampleApp.Domen.Application;
+using Newtonsoft.Json;
 using SampleApp.Domen.Models;
+using System.Runtime.InteropServices;
+using System.Text;
 
-namespace SampleApp.Pages
+
+namespace SampleApp.RazorPage.Pages
 {
     public class EditModel : PageModel
     {
-        private readonly SampleAppContext _context;
+        
+        private readonly HttpClient _http;
+        private readonly ILogger<AuthModel> _log;
         private readonly IFlasher _f;
-        private readonly ILogger<EditModel> _log;
 
-        public EditModel(SampleAppContext context, IFlasher f, ILogger<EditModel> log)
+        public EditModel(IHttpClientFactory factory, ILogger<AuthModel> log, IFlasher f)
         {
-            _context = context;
-            _f = f;
+            _http = factory.CreateClient("API");
             _log = log;
+            _f = f;
         }
 
-        [BindProperty]
         public User User { get; set; }
-
-        public async Task<IActionResult> OnGetAsync(int? id)
+        public User current_user { get; set; }
+        public async Task OnGet()
         {
-            if (id == null)
+            var sessionId = HttpContext.Session.GetString("SampleSession");
+
+            User = await _http.GetFromJsonAsync<User>($"{_http.BaseAddress}/users/{sessionId}");
+
+            var response = await _http.GetAsync($"{_http.BaseAddress}/users/{sessionId}");
+
+            current_user = await response.Content.ReadFromJsonAsync<User>();
+        }
+
+
+        public async Task OnPost()
+        {
+            var content = new StringContent(JsonConvert.SerializeObject(User), Encoding.UTF8, "application/json");
+            var response = await _http.PutAsync($"{_http.BaseAddress}/users/{User.Id}", content);
+
+            if (response.IsSuccessStatusCode)
             {
-
-                return NotFound();
-            }
-
-            User = await _context.Users.FirstOrDefaultAsync(m => m.Id == id);
-
-            if (User == null)
-            {
-                return NotFound();
+                _log.LogError($"Пользователь обновлён!");
+                _f.Success($"Пользователь обновлён!");
             }
             else
             {
-                return Page();
+                _log.LogError($"Ошибка при обновлении!");
+                _f.Danger($"Ошибка при обновлении!");
             }
-            
-        }
-
-        public async Task<IActionResult> OnPostAsync(User user)
-        {
-
-            _context.Attach(User).State = EntityState.Modified;
-
-
-            if (!user.IsPasswordConfirmation())
-            {
-                _log.LogWarning($"Пароли должны совпадать!");
-                _f.Flash(Types.Danger, "При редактировании пользователя возникла ошибка: пароли должны совпадать!", dismissable: true);
-                return Page();
-            }
-
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!UserExists(User.Id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return RedirectToPage("./Index");
-        }
-
-        private bool UserExists(int id)
-        {
-            return _context.Users.Any(e => e.Id == id);
         }
     }
 }

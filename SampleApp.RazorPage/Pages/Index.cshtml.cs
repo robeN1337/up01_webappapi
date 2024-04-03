@@ -10,7 +10,7 @@ namespace SampleApp.Pages
     {
         private readonly SampleAppContext _context;
         private readonly IFlasher _f;
-        private readonly ILogger<EditModel> _log;
+        private readonly ILogger<IndexModel> _log;
 
         public User CurrentUser { get; set; }
         public User ProfileUser { get; set; }
@@ -19,7 +19,7 @@ namespace SampleApp.Pages
         public IEnumerable<User> Followeds { get; set; }
         public List<User> Users { get; set; } = new();
 
-        public IndexModel(SampleAppContext context, IFlasher f, ILogger<EditModel> log)
+        public IndexModel(SampleAppContext context, IFlasher f, ILogger<IndexModel> log)
         {
             _context = context;
             _f = f;

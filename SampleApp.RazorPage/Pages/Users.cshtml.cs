@@ -9,15 +9,14 @@ namespace SampleApp.Pages
     public class UsersModel : PageModel
     {
 
-        private readonly SampleAppContext _context;
+        //private readonly SampleAppContext _context;
         private readonly IFlasher _f;
         private readonly ILogger<UsersModel> _log;
         private readonly HttpClient _http;
 
-        public UsersModel(SampleAppContext context, IHttpClientFactory factory, IFlasher f, ILogger<UsersModel> log)
+        public UsersModel(IHttpClientFactory factory, IFlasher f, ILogger<UsersModel> log)
         {
             _http = factory.CreateClient("API");
-            _context = context;
             _f = f;
             _log = log;
         }
