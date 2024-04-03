@@ -26,15 +26,16 @@ public class AuthModel : PageModel
 
     public async Task<IActionResult> OnPostAsync(User user)
     {
+       // var response = await _http.PostAsJsonAsync<User>("https://localhost:7225/api/users/auth", user);
 
         var response = await _http.GetAsync($"{_http.BaseAddress}/users/auth?email={user.Email}&password={user.Password}");
-
+       
         var current_user = await response.Content.ReadFromJsonAsync<User>();
 
         if (response.IsSuccessStatusCode)
         {
             HttpContext.Session.SetString("SampleSession", $"{current_user.Id}");
-            _f.Flash(Types.Primary, $"Добро пожаловать, {current_user.Name}!");
+            _f.Flash(Types.Success, $"Добро пожаловать, {current_user.Name}!");
             return RedirectToPage("Index");
         }
         else

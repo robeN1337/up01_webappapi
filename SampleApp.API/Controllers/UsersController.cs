@@ -81,7 +81,7 @@ public class UsersController : ControllerBase
     }
 
     // POST: api/Users // Регистрация пользователя
-    [HttpPost("reg")]
+    [HttpPost]
     public async Task<ActionResult<User>> RegisterUser(User user)
     {
         _context.Users.Add(user);
@@ -108,8 +108,7 @@ public class UsersController : ControllerBase
         {
             if (current_user != null)
             {
-                HttpContext.Session.SetString("SampleSession", $"{current_user.Id}");
-                return Ok();
+                return Ok(current_user);
             }
             else
             {
