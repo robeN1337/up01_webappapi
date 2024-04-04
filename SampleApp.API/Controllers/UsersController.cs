@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
+using SampleApp.Domen.Application;
 using SampleApp.Domen.Models;
-using System;
+using System.Text;
 
 namespace SampleApp.API.Controllers;
 
@@ -59,6 +61,10 @@ public class UsersController : ControllerBase
             return BadRequest();
         }
 
+        if(!user.IsPasswordConfirmation())
+        {
+            return BadRequest("Пароли должны совпадать.");
+        }    
         _context.Entry(user).State = EntityState.Modified;
 
         try
@@ -96,6 +102,72 @@ public class UsersController : ControllerBase
             return BadRequest(ex.InnerException.Message);
         }
     }
+    
+
+
+
+    [HttpGet("Followers/{id}")]
+    public async Task<ActionResult<IEnumerable<User>>> GetFollowersById(int id)
+    {
+        if (_context.Relations == null)
+        {
+            return NotFound();
+        }
+
+
+        var relations = await _context.Relations.Where(r => r.FollowedId == id).ToListAsync();
+
+        if (relations == null)
+        {
+            return NotFound();
+        }
+
+
+        User user = null;
+        List<User> followers = new List<User>();
+
+        foreach (var relation in relations)
+        {
+            user = await _context.Users.FindAsync(relation.FollowerId);
+            user.RelationFolloweds = null;
+            user.RelationFollowers = null;
+            followers.Add(user);
+        }
+        //var content = new StringContent(JsonConvert.SerializeObject(followers), Encoding.UTF8, "application/json"); 
+        return followers;
+    }
+
+    [HttpGet("Followeds/{id}")]
+    public async Task<ActionResult<IEnumerable<User>>> GetFollowedsById(int id)
+    {
+        if (_context.Relations == null)
+        {
+            return NotFound();
+        }
+
+
+        var relations = await _context.Relations.Where(r => r.FollowerId == id).ToListAsync();
+
+        if (relations == null)
+        {
+            return NotFound();
+        }
+
+
+        User user = null;
+        List<User> followeds = new List<User>();
+
+        foreach (var relation in relations)
+        {
+            user = await _context.Users.FindAsync(relation.FollowedId);
+            user.RelationFolloweds = null;
+            user.RelationFollowers = null;
+            followeds.Add(user);
+        }
+        //var content = new StringContent(JsonConvert.SerializeObject(followers), Encoding.UTF8, "application/json"); 
+        return followeds;
+    }
+
 
 
     // GET: api/Users/auth?email=a&password=b  // Авторизация по email и password

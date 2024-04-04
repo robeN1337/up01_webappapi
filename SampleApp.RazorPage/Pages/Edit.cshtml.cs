@@ -24,9 +24,12 @@ namespace SampleApp.RazorPage.Pages
             _f = f;
         }
 
+        [BindProperty]
         public User User { get; set; }
+
         public User current_user { get; set; }
-        public async Task OnGet()
+
+        public async Task OnGetAsync()
         {
             var sessionId = HttpContext.Session.GetString("SampleSession");
 
@@ -38,7 +41,7 @@ namespace SampleApp.RazorPage.Pages
         }
 
 
-        public async Task OnPost()
+        public async Task<IActionResult> OnPostAsync()
         {
             var content = new StringContent(JsonConvert.SerializeObject(User), Encoding.UTF8, "application/json");
             var response = await _http.PutAsync($"{_http.BaseAddress}/users/{User.Id}", content);
@@ -51,8 +54,10 @@ namespace SampleApp.RazorPage.Pages
             else
             {
                 _log.LogError($"Ошибка при обновлении!");
-                _f.Danger($"Ошибка при обновлении!");
+                _f.Danger($"Ошибка при обновлении! \nПопытайтесь снова.");
+                return RedirectToPage("Edit");
             }
+            return RedirectToPage("/Index");
         }
     }
 }
