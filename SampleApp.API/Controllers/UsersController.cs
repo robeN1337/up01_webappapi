@@ -105,7 +105,7 @@ public class UsersController : ControllerBase
     
 
 
-
+    
     [HttpGet("Followers/{id}")]
     public async Task<ActionResult<IEnumerable<User>>> GetFollowersById(int id)
     {
@@ -114,15 +114,12 @@ public class UsersController : ControllerBase
             return NotFound();
         }
 
-
         var relations = await _context.Relations.Where(r => r.FollowedId == id).ToListAsync();
 
         if (relations == null)
         {
             return NotFound();
         }
-
-
         User user = null;
         List<User> followers = new List<User>();
 
@@ -144,16 +141,12 @@ public class UsersController : ControllerBase
         {
             return NotFound();
         }
-
-
         var relations = await _context.Relations.Where(r => r.FollowerId == id).ToListAsync();
 
         if (relations == null)
         {
             return NotFound();
         }
-
-
         User user = null;
         List<User> followeds = new List<User>();
 

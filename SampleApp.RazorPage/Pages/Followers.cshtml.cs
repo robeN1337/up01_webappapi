@@ -47,7 +47,7 @@ namespace SampleApp.Pages
 
             ProfileUser = await profileuser_resp.Content.ReadFromJsonAsync<User>();
 
-            var followers = await _http.GetAsync($"{_http.BaseAddress}/users/Followers/{id}");
+            var followers = await _http.GetAsync($"{_http.BaseAddress}/relations/Followers/{id}");
 
             if(!followers.IsSuccessStatusCode)
             {

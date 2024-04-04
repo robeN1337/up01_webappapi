@@ -11,6 +11,7 @@
         foreach (var user in Model.Followers)
         {
             <li> <a class="btn btn-success" asp-page="Profile" asp-route-id="@user.Id">@user.Name</a> </li>
+            <br />
         }
     }
 </ul>
